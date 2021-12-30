@@ -20,7 +20,9 @@ def main_page(request):
 
 def copy_page(request):
     context = {"menu": get_menu_context(request)}
+
     delete = request.POST.get("DELETE")
+
     current_group_id = int(request.GET.get('current_group_id', '1'))
     current_group = Groups.objects.get(id=current_group_id)
     context['current_group'] = current_group
