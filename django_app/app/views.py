@@ -29,10 +29,9 @@ def copy_page(request):
     context['current_group'] = current_group
 
     if request.method == 'POST':
-        delete = request.POST.getlist("DELETE")
+        delete = request.POST.get("DELETE")
         if (delete):
-            print(delete)
-            #RusChineHistory.objects.get(id=delete).delete()
+            RusChineHistory.objects.get(id=delete).delete()
 
 
 
