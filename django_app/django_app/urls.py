@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('index', views.main_page, name='index'),
     path('', views.copy_page, name='copy_page'),
+    path('add_group', views.add_group, name='add_group'),
 ]
