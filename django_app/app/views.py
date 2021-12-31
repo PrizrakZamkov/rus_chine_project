@@ -1,15 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 
 from app.models import RusChineHistory, Groups
-from app.forms import RusChineForm, AddGroupForm
+from app.forms import RusChineForm, AddGroupForm, RusToChi, ChiToRus
 from django.urls import reverse
-
+#from googletrans import Translator
+import googletrans
 
 def get_menu_context(request):
     menu = [
         dict(title='Главная Страница', url=reverse('index')),
         dict(title='Страница копипаста', url=reverse('copy_page')),
         dict(title='Редактирование групп', url=reverse('add_group')),
+        dict(title='Переводчик', url=reverse('translate')),
     ]
     return menu
 
@@ -17,6 +19,28 @@ def get_menu_context(request):
 def main_page(request):
     context = {"menu": get_menu_context(request)}
     return render(request, 'index.html', context)
+
+def translate(request):
+    context = {"menu": get_menu_context(request)}
+
+    translator = googletrans.Translator()
+    #print(googletrans.LANGUAGES)
+    '''result = translator.translate(text='Привет', src='ru', dest='zh-cn')
+    print(result.src)
+    print(result.dest)
+    print(result.text)'''
+
+    if request.method == 'POST':
+        f = request.POST.get("Rus")
+        if f:
+            context['res_chi'] = translator.translate(text=f, src='ru', dest='zh-cn').text
+            context['rus_text'] = f
+        f2 = request.POST.get("Chi")
+        if f2:
+            context['res_rus'] = translator.translate(text=f2, src='zh-cn', dest='ru').text
+            context['chi_text'] = f2
+
+    return render(request, 'translate.html', context)
 
 
 def add_group(request):
