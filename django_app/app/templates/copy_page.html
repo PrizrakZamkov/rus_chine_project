@@ -50,6 +50,14 @@
 
 
 
+
+
+
+
+
+
+
+
     </style>
     <meta charset="UTF-8">
     <title>Страница Копипаста</title>
@@ -92,20 +100,41 @@
                                     </button>
 
                                     <ul class="dropdown-menu dropdown-menu-lg-end">
-                                        {% for item in groups %}
-                                        <li>
-                                            <a class="dropdown-item" href='/?current_group_id={{ item.id }}'>
-                                                {{ item.group }}
-                                            </a>
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
 
+                                        <form method="POST" action="">
+                                            {% csrf_token %}
+                                            {% for item in groups %}
+                                            <li>
+                                                <button class="dropdown-item btn btn-light" type="submit"
+                                                        name="GROUP"
+                                                        value="{{ item.id }}">
+                                                    {{ item.group }}
+                                                </button>
+                                            </li>
+
+                                            {% endfor %}
+                                        </form>
+                                    </ul>
                                 </div>
                             </div>
 
+                            <!--
+                                                        <form method="POST" action="">
+                                                            {% csrf_token %}
+                                                            {% for item in groups %}
+                                                            <li>
+                                                                <button class="dropdown-item btn btn-light" type="submit"
+                                                                        name="GROUP"
+                                                                        value="{{ item.id }}">
+                                                                    {{ item.group }}
+                                                                </button>
+                                                            </li>
 
-                            <form action="/?current_group_id={{ current_group.id }}" method="POST">
+                                                            {% endfor %}
+                                                        </form>-->
+
+
+                            <form action="/" method="POST">
                                 {% csrf_token %}
 
                                 <div class="d-grid gap-2 col-6 mx-auto ">
@@ -122,9 +151,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <input type="hidden" name="form.group" value="{{ current_group.id }}">
                                 <div class="d-grid gap-2 col-6 mx-auto">
-                                    <input class="btn btn-primary" type="submit" value="Записать">
+                                    <button class="btn btn-primary" type="submit"
+                                            name="GROUP"
+                                            value="{{ current_group.id }}">
+                                        Записать
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -161,14 +193,14 @@
                             <td><p id="{{ item.id }}">{{ item.chine }}</p></td>
                             <td><input class="btn btn-success" type="button" onclick="copyEvent('{{item.id}}')"
                                        value="Копировать"></td>
-                            danger
-
                             <td>
-                                <button class="btn btn-danger" type="submit" name="DELETE" value="{{ item.id }}">
+                                <input type="hidden" name="GROUP" value="{{ item.group.id }}">
+                                <input type="hidden" name="DELETE" value="{{ item.id }}">
+
+                                <button class="btn btn-danger" type="submit" name="DELETE" value="{{ item.id }} ">
                                     Удалить
                                 </button>
                             </td>
-
                             <script>
                             function copyEvent(id)
                             {
@@ -177,12 +209,9 @@
                                 document.execCommand("Copy")
                             }
 
-
                             </script>
-
                         </tr>
                         {% endfor %}
-
                     </form>
                     </tbody>
                 </table>

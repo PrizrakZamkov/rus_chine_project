@@ -21,14 +21,24 @@ def main_page(request):
 def copy_page(request):
     context = {"menu": get_menu_context(request)}
 
-    delete = request.POST.get("DELETE")
+    current_group_id = request.POST.get("GROUP")
+    if(not current_group_id):
+        current_group_id = 1
 
-    current_group_id = int(request.GET.get('current_group_id', '1'))
     current_group = Groups.objects.get(id=current_group_id)
     context['current_group'] = current_group
-    if (delete):
-        RusChineHistory.objects.get(id=delete).delete()
+
     if request.method == 'POST':
+        delete = request.POST.getlist("DELETE")
+        if (delete):
+            print(delete)
+            #RusChineHistory.objects.get(id=delete).delete()
+
+
+
+        current_group = Groups.objects.get(id=current_group_id)
+        context['current_group'] = current_group
+
         f = RusChineForm(request.POST)
         if f.is_valid():
 
