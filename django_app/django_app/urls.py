@@ -16,11 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
-    path('index', views.main_page, name='index'),
+    #path('index', views.main_page, name='index'),
     path('', views.copy_page, name='copy_page'),
     path('add_group', views.add_group, name='add_group'),
     path('translate', views.translate, name='translate'),
+    path(
+        'login/',
+        auth_views.LoginView.as_view(
+        ),
+        name='login'
+    ),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]

@@ -3,12 +3,13 @@ from django.shortcuts import render, get_object_or_404
 from app.models import RusChineHistory, Groups
 from app.forms import RusChineForm, AddGroupForm, RusToChi, ChiToRus
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 #from googletrans import Translator
 import googletrans
 
 def get_menu_context(request):
     menu = [
-        dict(title='Главная Страница', url=reverse('index')),
+        #dict(title='Главная Страница', url=reverse('index')),
         dict(title='Страница копипаста', url=reverse('copy_page')),
         dict(title='Редактирование групп', url=reverse('add_group')),
         dict(title='Переводчик', url=reverse('translate')),
@@ -20,6 +21,7 @@ def main_page(request):
     context = {"menu": get_menu_context(request)}
     return render(request, 'index.html', context)
 
+@login_required
 def translate(request):
     context = {"menu": get_menu_context(request)}
 
@@ -42,7 +44,7 @@ def translate(request):
 
     return render(request, 'translate.html', context)
 
-
+@login_required
 def add_group(request):
     context = {"menu": get_menu_context(request)}
 
@@ -75,7 +77,7 @@ def add_group(request):
     context["history"] = Groups.objects.all()
 
     return render(request, 'add_group.html', context)
-
+@login_required
 def copy_page(request):
     context = {"menu": get_menu_context(request)}
     current_group_id = request.POST.get("GROUP")
@@ -86,7 +88,6 @@ def copy_page(request):
     context['current_group'] = current_group
 
     if request.method == 'POST':
-
         restore = request.POST.get("RESTORE")
         if (restore):
             try:
@@ -113,6 +114,19 @@ def copy_page(request):
                 RusChineHistory.objects.filter(group=delete_all).delete()#всегда 2 - делетед
             except:
                 print("id",delete_all,"is not exist")
+
+
+        change_word = request.POST.get("CHANGE_GROUP")
+        if (change_word):
+            change_group, change_word = map(int, change_word.split(";"))
+            try:
+                tmp = RusChineHistory.objects.get(id=change_word)
+                item = RusChineHistory(group=Groups.objects.get(id=change_group), rus=tmp.rus, chine=tmp.chine)
+                item.save()
+                RusChineHistory.objects.get(id=change_word).delete()
+            except:
+                print("error in change word")
+
 
 
         current_group = Groups.objects.get(id=current_group_id)
