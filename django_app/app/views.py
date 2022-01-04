@@ -5,14 +5,14 @@ from app.forms import RusChineForm, AddGroupForm, RusToChi, ChiToRus
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 #from googletrans import Translator
-import googletrans
+#import googletrans
 
 def get_menu_context(request):
     menu = [
         #dict(title='Главная Страница', url=reverse('index')),
         dict(title='Страница копипаста', url=reverse('copy_page')),
         dict(title='Редактирование групп', url=reverse('add_group')),
-        dict(title='Переводчик', url=reverse('translate')),
+        #dict(title='Переводчик', url=reverse('translate')),
     ]
     return menu
 
@@ -24,13 +24,13 @@ def main_page(request):
 @login_required
 def translate(request):
     context = {"menu": get_menu_context(request)}
-
+    '''
     translator = googletrans.Translator()
     #print(googletrans.LANGUAGES)
-    '''result = translator.translate(text='Привет', src='ru', dest='zh-cn')
+    result = translator.translate(text='Привет', src='ru', dest='zh-cn')
     print(result.src)
     print(result.dest)
-    print(result.text)'''
+    print(result.text)
 
     if request.method == 'POST':
         f = request.POST.get("Rus")
@@ -41,7 +41,7 @@ def translate(request):
         if f2:
             context['res_rus'] = translator.translate(text=f2, src='zh-cn', dest='ru').text
             context['chi_text'] = f2
-
+    '''
     return render(request, 'translate.html', context)
 
 @login_required
@@ -68,6 +68,7 @@ def add_group(request):
             item.save()
 
             context['group'] = group
+            context['form'] = AddGroupForm()
         else:
             context['form'] = f
     else:
@@ -92,19 +93,19 @@ def copy_page(request):
         if (restore):
             try:
                 tmp = RusChineHistory.objects.get(id=restore)
-                item = RusChineHistory(group=Groups.objects.get(id=1), rus=tmp.rus, chine=tmp.chine)
-                item.save()
-                RusChineHistory.objects.get(id=restore).delete()
+                tmp.group = Groups.objects.get(id=1)
+                tmp.save()
             except:
                 print("id",restore,"is not exist")
         delete = request.POST.get("DELETE")
         if (delete):
             try:
                 tmp = RusChineHistory.objects.get(id=delete)
-                if (tmp.group.id != 2):
-                    item = RusChineHistory(group=Groups.objects.get(id=2), rus=tmp.rus, chine=tmp.chine)
-                    item.save()
-                RusChineHistory.objects.get(id=delete).delete()
+                if (tmp.group.id == 2):
+                    tmp.delete()
+                else:
+                    tmp.group = Groups.objects.get(id=2)
+                    tmp.save()
             except:
                 print("id",delete,"is not exist")
 
@@ -121,9 +122,8 @@ def copy_page(request):
             change_group, change_word = map(int, change_word.split(";"))
             try:
                 tmp = RusChineHistory.objects.get(id=change_word)
-                item = RusChineHistory(group=Groups.objects.get(id=change_group), rus=tmp.rus, chine=tmp.chine)
-                item.save()
-                RusChineHistory.objects.get(id=change_word).delete()
+                tmp.group = Groups.objects.get(id=change_group)
+                tmp.save()
             except:
                 print("error in change word")
 
@@ -143,7 +143,7 @@ def copy_page(request):
 
             context['rus'] = rus
             context['chine'] = chine
-            context['form'] = f
+            context['form'] = RusChineForm()
         else:
             context['form'] = f
     else:
