@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 #from googletrans import Translator
 #import googletrans
-
+#for me rus_chine_project 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 Prizrak Zamkov
 def get_menu_context(request):
     menu = [
         #dict(title='Главная Страница', url=reverse('index')),
