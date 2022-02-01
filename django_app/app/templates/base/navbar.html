@@ -1,24 +1,99 @@
 <!-- Fixed navbar -->
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/">RusChine</a>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav me-auto mb-2 mb-md-0">
-        {% block menu %}
-          {% for item in menu %}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ item.url }}">{{ item.title }}   </a>
-            </li>
-          {% endfor %}
-          <li>
-            {% if request.user.is_authenticated %}
-            <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
-            {% else %}
-            <a class="nav-link" href="{% url 'login' %}">Войти</a>
-            {% endif %}
-          </li>
-        {% endblock %}
-        </ul>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">PhraseBook</a>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                {% block menu %}
+                {% for item in menu %}
+                <li class="nav-item">
+                    {% if item.title %}
+                    <a class="nav-link" href="{{ item.url }}">{{ item.title }} </a>
+                    {% else %}
+                    <a class="nav-link" href="{{ item.url }}">PhraseBook</a>
+                    {% endif %}
+                </li>
+                {% endfor %}
+                <li>
+                    {% if request.user.is_authenticated %}
+
+                        {% if system.logout %}
+                            <a class="nav-link" href="{% url 'logout' %}">{{ system.logout }}</a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'logout' %}">Log out</a>
+                        {% endif %}
+
+                    {% else %}
+                        {% if system.login %}
+                            <a class="nav-link" href="{% url 'logout' %}">{{ system.login }}</a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'logout' %}">Log in</a>
+                        {% endif %}
+
+                    {% endif %}
+                </li>
+
+
+                {% endblock %}
+            </ul>
+        </div>
+
+        {% if language_1 %}
+        <div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ language_1.language }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton1">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        {% for item in language_list %}
+                        <li>
+                            <button class="dropdown-item btn btn-light" type="submit"
+                                    name="LANGUAGE_1"
+                                    value="{{ item.id }}">
+                                {{ item.language }}
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </form>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        {% if language_2 %}
+        <form method="POST" action="">
+            {% csrf_token %}
+            <button class="dropdown-item btn btn-dark" type="submit"
+                    name="SHIFT_LANGUAGES"
+                    value="1" style="width: 100px; height: 40px;">
+                <h3 class="px-3 text-light"  > --> </h3>
+            </button>
+        </form>
+        <div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ language_2.language }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton2">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        {% for item in language_list %}
+                        <li>
+                            <button class="dropdown-item btn btn-light" type="submit"
+                                    name="LANGUAGE_2"
+                                    value="{{ item.id }}">
+                                {{ item.language }}
+                            </button>
+                        </li>
+
+                        {% endfor %}
+                    </form>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
     </div>
-  </div>
 </nav>

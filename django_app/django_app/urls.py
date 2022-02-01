@@ -20,10 +20,8 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
-    #path('index', views.main_page, name='index'),
-    path('', views.copy_page, name='copy_page'),
-    path('add_group', views.add_group, name='add_group'),
-    path('translate', views.translate, name='translate'),
+    path('index', views.main_page, name='index'),
+    path('', views.new_copy_page_new, name='new_copy_page_new'),
     path(
         'login/',
         auth_views.LoginView.as_view(
